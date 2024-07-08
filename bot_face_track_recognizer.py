@@ -34,10 +34,11 @@ class Camera():
 
     def release_camera(self):
         self.picam2.stop()
+        self.picam2.close()
 
 def face_recognize():
     # モデルの読み込み
-    face_detector_weights = str(Path("dnn_models/yunet.onnx").resolve())
+    face_detector_weights = str(Path("dnn_models/face_detection_yunet_2023mar.onnx").resolve())
     #face_detector_weights = str(Path("dnn_models/yunet_s_640_640.onnx").resolve())  # 顔検出用のweights
     face_detector = cv2.FaceDetectorYN_create(face_detector_weights, "", (0, 0))
 
@@ -66,7 +67,6 @@ def face_recognize():
         return False, ("", 0.0)
     
     recognized_ids =[]
-    
     # カメラのデフォルトのパン/チルト (度単位)。コードを開始するときに、おおよその顔の位置を指すように設定しました
     # カメラの範囲は 0 ～ 180 です。以下の値を変更して、パンとチルトの開始点を決定します。
     cam_pan = 90
@@ -137,6 +137,8 @@ def face_recognize():
             if result:
                 recognized_ids.append(id)
                 #print(recognized_ids)
+            else:
+               recognized_ids.append('unknow')
 
             # 顔の中心を捉える
             x = x + (w/2)
